@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Deletion-resilient hypermedia pagination"""
-
 import csv
 from typing import List, Dict
 
@@ -35,19 +34,20 @@ class Server:
         """Return a deletion-resilient page"""
         dataset = self.indexed_dataset()
 
-        # ✔ Assertions
         assert isinstance(page_size, int) and page_size > 0
-        assert index is None or (isinstance(index, int) and index >= 0 and index < len(dataset))
+        assert index is None or (
+            isinstance(index, int) and 0 <= index <= max(dataset.keys())
+        )
 
-        # ✔ Index par défaut
         if index is None:
             index = 0
 
         data = []
         current_index = index
 
-        # ✔ Remplir la page en sautant les trous
-        while len(data) < page_size and current_index < len(dataset):
+        # Parcourt les index en sautant les trous (entrées supprimées)
+        max_index = max(dataset.keys())
+        while len(data) < page_size and current_index <= max_index:
             if current_index in dataset:
                 data.append(dataset[current_index])
             current_index += 1
@@ -56,5 +56,5 @@ class Server:
             "index": index,
             "data": data,
             "page_size": len(data),
-            "next_index": current_index
+            "next_index": current_index if current_index <= max_index else None
         }
