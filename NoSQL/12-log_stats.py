@@ -14,7 +14,7 @@ if __name__ == "__main__":
     methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
     for method in methods:
         count = collection.count_documents({"method": method})
-        print(f"\tmethod {method}: {count}")
+        print(f"    method {method}: {count}")
 
     # status check
     status_count = collection.count_documents({
