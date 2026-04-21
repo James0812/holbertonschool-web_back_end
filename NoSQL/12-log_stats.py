@@ -2,23 +2,28 @@
 """Script that provides stats about Nginx logs stored in MongoDB"""
 from pymongo import MongoClient
 
-if __name__ == "__main__":
-    client = MongoClient('mongodb://127.0.0.1:27017')
-    collection = client.logs.nginx
+METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
-    # total logs
-    total_logs = collection.count_documents({})
-    print(f"{total_logs} logs")
 
+def log_stats(mongo_collection, option=None):
+    """Script that provides some stats about Nginx logs stored in MongoDB"""
+    if option:
+        value = mongo_collection.count_documents({"method": option})
+        print(f"\tmethod {option}: {value}")
+        return
+
+    result = mongo_collection.count_documents({})
+    print(f"{result} logs")
     print("Methods:")
-    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    for method in methods:
-        count = collection.count_documents({"method": method})
-        print(f"    method {method}: {count}")
+    for method in METHODS:
+        log_stats(mongo_collection, method)
 
-    # status check
-    status_count = collection.count_documents({
-        "method": "GET",
-        "path": "/status"
-    })
-    print(f"{status_count} status check")
+    status_check = mongo_collection.count_documents(
+        {"method": "GET", "path": "/status"}
+    )
+    print(f"{status_check} status check")
+
+
+if __name__ == "__main__":
+    nginx_collection = MongoClient('mongodb://127.0.0.1:27017').logs.nginx
+    log_stats(nginx_collection)
