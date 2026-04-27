@@ -5,5 +5,6 @@ export default function getSanFranciscoDescription() {
     gdp: '$154.2 billion',
     capita: '$178,479',
   };
+
   return `As of ${year}, it is estimated that ${budget.income} in salary are fed to the city's ${budget.gdp} GDP of ${budget.capita}`;
 }
