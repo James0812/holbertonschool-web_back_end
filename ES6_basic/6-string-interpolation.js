@@ -6,7 +6,5 @@ export default function getSanFranciscoDescription() {
     capita: '$178,479',
   };
 
-  const { income, gdp, capita } = budget;
-
-  return `As of ${year}, it is estimated that ${income} in salary are fed to the city's ${gdp} GDP of ${capita}`;
+  return `As of ${year}, it is estimated that ${budget.income} in salary are fed to the city's ${budget.gdp} GDP of ${budget.capita}`;
 }
