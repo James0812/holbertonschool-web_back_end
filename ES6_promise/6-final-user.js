@@ -7,16 +7,9 @@ export default function handleProfileSignup(firstName, lastName, fileName) {
     uploadPhoto(fileName),
   ]).then((results) =>
     results.map((res) => {
-      if (res.status === "fulfilled") {
-        return {
-          status: res.status,
-          value: res.value,
-        };
-      }
-
       return {
         status: res.status,
-        value: res.reason,
+        value: res.status === "fulfilled" ? res.value : res.reason,
       };
     })
   );
