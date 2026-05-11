@@ -9,29 +9,35 @@ function countStudents(path) {
     throw new Error('Cannot load the database');
   }
 
-  const lines = data.split('\n').filter((line) => line.trim() !== '');
-  const students = lines.slice(1);
+  const lines = data.toString().split('\n');
 
-  console.log(`Number of students: ${students.length}`);
+  const students = lines.filter((line) => line !== '');
+
+  const numberOfStudents = students.length - 1;
+
+  console.log(`Number of students: ${numberOfStudents}`);
 
   const fields = {};
 
-  students.forEach((student) => {
-    const parts = student.split(',');
-    const firstname = parts[0];
-    const field = parts[3];
+  for (let i = 1; i < students.length; i += 1) {
+    const student = students[i].split(',');
+
+    const firstname = student[0];
+    const field = student[3];
 
     if (!fields[field]) {
       fields[field] = [];
     }
 
     fields[field].push(firstname);
-  });
+  }
 
   for (const field in fields) {
-    console.log(
-      `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
-    );
+    if (Object.prototype.hasOwnProperty.call(fields, field)) {
+      console.log(
+        `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
+      );
+    }
   }
 }
 
