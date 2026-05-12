@@ -16,6 +16,7 @@ function readDatabase(filePath) {
         const parts = student.split(',');
         const firstname = parts[0];
         const field = parts[3];
+
         if (!fields[field]) fields[field] = [];
         fields[field].push(firstname);
       });
