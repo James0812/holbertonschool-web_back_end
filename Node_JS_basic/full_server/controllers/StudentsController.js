@@ -1,4 +1,4 @@
-import readDatabase from '../utils';
+import readDatabase from '../utils.js';
 
 class StudentsController {
   static getAllStudents(request, response) {
@@ -8,10 +8,12 @@ class StudentsController {
         const sortedFields = Object.keys(fields).sort(
           (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
         );
+
         sortedFields.forEach((field) => {
           const names = fields[field];
           output.push(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
         });
+
         response.status(200).send(output.join('\n'));
       })
       .catch(() => {
@@ -21,10 +23,12 @@ class StudentsController {
 
   static getAllStudentsByMajor(request, response) {
     const { major } = request.params;
+
     if (major !== 'CS' && major !== 'SWE') {
       response.status(500).send('Major parameter must be CS or SWE');
       return;
     }
+
     readDatabase(process.argv[2])
       .then((fields) => {
         const names = fields[major] || [];
@@ -37,3 +41,4 @@ class StudentsController {
 }
 
 export default StudentsController;
+
