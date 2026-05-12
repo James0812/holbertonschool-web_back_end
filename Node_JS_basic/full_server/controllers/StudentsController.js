@@ -19,10 +19,10 @@ class StudentsController {
           );
         });
 
-        response.status(200).send(output.join('\n'));
+        response.status(200).type('text/plain').send(output.join('\n'));
       })
       .catch(() => {
-        response.status(500).send('Cannot load the database');
+        response.status(500).type('text/plain').send('Cannot load the database');
       });
   }
 
@@ -31,17 +31,17 @@ class StudentsController {
     const { major } = request.params;
 
     if (major !== 'CS' && major !== 'SWE') {
-      response.status(500).send('Major parameter must be CS or SWE');
+      response.status(500).type('text/plain').send('Major parameter must be CS or SWE');
       return;
     }
 
     readDatabase(database)
       .then((fields) => {
         const names = fields[major] || [];
-        response.status(200).send(`List: ${names.join(', ')}`);
+        response.status(200).type('text/plain').send(`List: ${names.join(', ')}`);
       })
       .catch(() => {
-        response.status(500).send('Cannot load the database');
+        response.status(500).type('text/plain').send('Cannot load the database');
       });
   }
 }
