@@ -1,30 +1,23 @@
-import fs from 'fs';
+import fs from 'node:fs/promises';
 
-export function readDatabase(filePath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      const lines = data.split('\n').filter((line) => line.trim() !== '');
-      const students = lines.slice(1);
-
-      const fields = {};
-      students.forEach((student) => {
-        const parts = student.split(',');
-        const firstname = parts[0];
-        const field = parts[3];
-        if (!fields[field]) {
-          fields[field] = [];
+export default function readDatabase(path) {
+  const database = fs.readFile(path, { encoding: 'utf8' });
+  return database
+    .then((readData) => {
+      const linesArray = readData.split('\n');
+      const studentsArray = linesArray
+        .slice(1, -1).filter((line) => line.trim().length !== 0)
+        .map((line) => line.split(','))
+        .map((student) => student.map((property) => property.trim()));
+      const studentsFields = {};
+      for (const student of studentsArray) {
+        if (!(student[3] in studentsFields)) {
+          studentsFields[student[3]] = [student[0]];
+        } else {
+          studentsFields[student[3]].push(student[0]);
         }
-        fields[field].push(firstname);
-      });
-
-      resolve(fields);
-    });
-  });
+      }
+      return studentsFields;
+    })
+    .catch(() => Promise.reject(new Error('Cannot load the database')));
 }
-
-export default readDatabase;
