@@ -1,27 +1,39 @@
 import readDatabase from '../utils';
 
-export default class StudentsController {
+class StudentsController {
   static getAllStudents(request, response) {
-    const output = ['This is the list of our students'];
     readDatabase(process.argv[2])
-      .then((readData) => {
-        for (const field of Object.keys(readData).sort()) {
-          output.push(`Number of students in ${field}: ${readData[field].length}. List: ${readData[field].join(', ')}`);
-        }
+      .then((fields) => {
+        const output = ['This is the list of our students'];
+        const sortedFields = Object.keys(fields).sort(
+          (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
+        );
+        sortedFields.forEach((field) => {
+          const names = fields[field];
+          output.push(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
+        });
         response.status(200).send(output.join('\n'));
       })
-      .catch((err) => response.status(500).send(err.message));
+      .catch(() => {
+        response.status(500).send('Cannot load the database');
+      });
   }
 
   static getAllStudentsByMajor(request, response) {
-    if (!['CS', 'SWE'].includes(request.params.major)) {
+    const { major } = request.params;
+    if (major !== 'CS' && major !== 'SWE') {
       response.status(500).send('Major parameter must be CS or SWE');
-    } else {
-      readDatabase(process.argv[2])
-        .then((readData) => {
-          response.status(200).send(`List: ${readData[request.params.major].join(', ')}`);
-        })
-        .catch((err) => response.status(500).send(err.message));
+      return;
     }
+    readDatabase(process.argv[2])
+      .then((fields) => {
+        const names = fields[major] || [];
+        response.status(200).send(`List: ${names.join(', ')}`);
+      })
+      .catch(() => {
+        response.status(500).send('Cannot load the database');
+      });
   }
 }
+
+export default StudentsController;
