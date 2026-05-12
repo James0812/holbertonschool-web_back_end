@@ -1,7 +1,7 @@
-import fs from 'node:fs/promises';
+import fs from 'fs';
 
 export default function readDatabase(path) {
-  const database = fs.readFile(path, { encoding: 'utf8' });
+  const database = fs.promises.readFile(path, { encoding: 'utf8' });
   return database
     .then((readData) => {
       const linesArray = readData.split('\n');
