@@ -6,8 +6,6 @@ const port = 1245;
 
 mapRoutes(app);
 
-if (require.main === module) {
-  app.listen(port);
-}
+app.listen(port);
 
 export default app;
